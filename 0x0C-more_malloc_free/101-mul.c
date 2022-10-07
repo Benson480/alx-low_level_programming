@@ -1,72 +1,181 @@
-#include "holberton.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include "holberton.h"
+
+void populateResult(char *dest, char *n1, int n1_len, char *n2, int n2_len);
+int getLengthOfNum(char *str);
+void print_result(char *src, int length);
 
 /**
-* main - multiplies two positive numbers.
-* @argc: number of arguments
-* @argv: the values in each argc element
-*
-* Description: its like infinite add but with multiplication
-* Return: print the result. return 0 if success
-*/
+ * main - entry point, multiplies two numbers
+ *
+ * @argc: integer, length of @argv
+ *
+ * @argv: one-dimensional array of strings, arguments of this program
+ *
+ * Return: 0, success
+ */
 
-# IF EITHER NUMBER ARE ZERO RETURN 0;
-##SHOULD CHECK IF BEGINNING LEADING NUMBER IS ZERO. 
-
-
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	int size1 = 0;
-	int size2 = 0;
-	int product_size = 0;
-	int product = 0;
-	int overflow = 0;
-	int index = 0;
-	int tab = 0;
+	int num1_length, num2_length;
+	char *result;
 
-	while (argv[1][size1])//strlength and checks if digit
+	if (argc != 3)
 	{
-		ISDIGIT\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\##################
-		size1++;
+		printf("Error\n");
+		exit(98);
 	}
-	while (argv[2][size2])//strlength and checks if digit
+
+	num1_length = getLengthOfNum(argv[1]);
+
+	if (!num1_length)
 	{
-		ISITADIGIT########################################################
-		size2++;
+		printf("Error\n");
+		exit(98);
 	}
-	product_size = size1 + size2 + 1;//calculate the range we need
-	product = malloc(sizeof(char) * product_size);//allocates space
-	if (!product)
-		return (98);
-	while (product_size >= 0)//initialize all to 0
-		product[product_size] = '0';
-	size1--;//because length is 1 more than index
-	size2--;
-	while (size2 >= 0)
+
+	num2_length = getLengthOfNum(argv[2]);
+
+	if (!num2_length)
 	{
-		index = tab;
-		for (j = size1; j >= 0; j--)
-		{
-			product = (argv[1][j]-'0') * (argv[2][size2]-'0');
-			product += product[index] -'0';
-			product += overflow;
-			overflow = product / 10;
-			product[index] = product % 10 + '0';
-			index++;
-		}
-		if (overflow)
-		{
-			product[index] = overflow;
-			index++;
-		}
-		overflow = 0;
-		size2--;
-		tab++;
+		printf("Error\n");
+		exit(98);
 	}
-	product[index] ='\0';
-	reversestring\\\\\###########################################################
-	printf("%s\n", product);
-	free(product);
+
+	result = malloc(num1_length + num2_length);
+
+	if (!result)
+		return (1);
+
+	populateResult(result, argv[1], num1_length, argv[2], num2_length);
+
+	print_result(result, num1_length + num2_length);
+	printf("\n");
+	free(result);
+
 	return (0);
+}
+
+/**
+ * getLengthOfNum - length of numbers in a string
+ *
+ * @str: pointer to string of numbers
+ *
+ * Return: integer (SUCCESS) or
+ * NULL, if string includes char
+ */
+
+int getLengthOfNum(char *str)
+{
+	int i = 0;
+
+	while (str[i])
+	{
+		if (str[i] >= '0' && str[i] <= '9')
+			i++;
+		else
+			return ('\0');
+
+	}
+
+	return (i);
+}
+
+/**
+ * populateResult - multiplies two numbers stored as string
+ * and stores result in @dest
+ *
+ * @dest: pointer to where @num1 * @num2 should be stored
+ *
+ * @n1: positive number stored as string in an array
+ *
+ * @n2: positive number stored as string in an array
+ *
+ * @n1_len: length of @n1
+ *
+ * @n2_len: length of @n2
+ */
+
+void populateResult(char *dest, char *n1, int n1_len, char *n2, int n2_len)
+{
+	int i, j, k, temp_value, non_carry_value;
+	int carry_value = 0;
+	char *multiplicand, *multiplier;
+
+	if (n1_len > n2_len)
+	{
+		i = n1_len - 1;
+		j = n2_len - 1;
+		multiplicand = n1;
+		multiplier = n2;
+	}
+	else
+	{
+		i = n2_len - 1;
+		j = n1_len - 1;
+		multiplicand = n2;
+		multiplier = n1;
+	}
+
+	while (i >= 0)
+	{
+		k = i;
+
+		while (k >= 0)
+		{
+			temp_value = ((multiplicand[k] - '0') * (multiplier[j] - '0'));
+			temp_value += carry_value;
+
+			if (j + 1 <= n2_len - 1 && dest[k + j + 1] >= '0' && dest[k + j + 1] <= '9')
+				temp_value += dest[k + j + 1] - '0';
+
+			if (temp_value < 10)
+			{
+				non_carry_value = temp_value;
+				carry_value = 0;
+			}
+			else
+			{
+				non_carry_value = temp_value % 10;
+				carry_value = temp_value / 10;
+			}
+
+			dest[k + j + 1] = non_carry_value + '0';
+			k--;
+		}
+
+		if (carry_value)
+			dest[k + j + 1] = carry_value + '0';
+
+		carry_value = 0;
+
+		if (j > 0)
+			j--;
+		else
+			i = -1;
+	}
+
+	free(dest);
+	free(multiplicand);
+	free(multiplier);
+}
+
+/**
+ * print_result - prints numbers stored as string in a memory location
+ *
+ * @src: pointer to memory that stores numbers as strings
+ *
+ * @length: length of @src
+ */
+
+void print_result(char *src, int length)
+{
+	int i;
+
+	for (i = 0; i < length; i++)
+	{
+		if (src[i] >= '0' && src[i] <= '9')
+		printf("%c", src[i]);
+	}
 }
