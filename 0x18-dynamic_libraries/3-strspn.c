@@ -1,30 +1,33 @@
 #include "holberton.h"
-#include <stdio.h>
-
 /**
- * _strspn - Get the length of a prefix substring
+ *_strspn - gets the length of a prefix substring
  *
- * @s: The character to print
+ *@s:string
+ *@accept:bytes
  *
- * @accept: Character
+ *Return:unsigned int
  *
- * Return: unsigned int
  */
-
 unsigned int _strspn(char *s, char *accept)
 {
-	unsigned int i, j;
+	unsigned int i = 0;
+	char *t = accept;
 
-	for (i = 0; s[i] != '\0'; i++)
+	while (*s++)
 	{
-		for (j = 0; accept[j] != s[i]; j++)
+		while (*accept++)
 		{
-			if (accept[j] == '\0')
-				return (i);
+			if (*(s - 1) == *(accept - 1))
+			{
+				i++;
+				break;
+			}
 		}
-
+		if (!(*--accept))
+		{
+			break;
+		}
+		accept = t;
 	}
-
 	return (i);
-
 }

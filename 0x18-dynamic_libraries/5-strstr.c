@@ -1,30 +1,33 @@
 #include "holberton.h"
-
 /**
- * _strstr - Locating a substring
+ *_strstr - locates a substring
  *
- * @needle: Occurance to find
+ *@haystack:string scanned
+ *@needle:substring to look for
  *
- * @haystack: String to search
- *
- * Return: Pointer
+ *Return:pointer to beginning of substring,NULl instead
  */
-
 char *_strstr(char *haystack, char *needle)
 {
+	char *scanned = haystack;
+	char *sub = needle;
+
 	while (*haystack)
 	{
-		char *src = haystack;
-		char *sub = needle;
-
-		while (*haystack && *sub && *haystack == *sub)
+		while (*needle)
 		{
-			haystack++;
-			sub++;
+			if (*haystack++ != *needle++)
+			{
+				break;
+			}
 		}
-		if (!*sub)
-			return (src);
-		haystack = src + 1;
+		if (!*needle)
+		{
+			return (scanned);
+		}
+		needle = sub;
+		scanned++;
+		haystack = scanned;
 	}
 	return (0);
 }
